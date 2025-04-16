@@ -2,115 +2,65 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Árvore de Habilidades - Necromante</title>
+  <title>Skill Tree</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #eee;
-      padding: 20px;
-    }
-    .skill {
-      border: 1px solid #555;
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 10px;
-      background-color: #222;
-    }
-    .unlocked {
-      background-color: #2c3e50;
-      color: #0f0;
-    }
-    button {
-      margin-top: 5px;
-      padding: 5px 10px;
-      background-color: #444;
+      background-color: #111;
       color: #fff;
-      border: none;
-      cursor: pointer;
+      font-family: sans-serif;
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
     }
-    button:disabled {
+
+    #central-circle {
+      width: 100px;
+      height: 100px;
+      background-color: #4b0082;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .skill-branch {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .skill-branch.left {
+      left: 20%;
+      align-items: flex-end;
+    }
+
+    .skill-branch.right {
+      right: 20%;
+      align-items: flex-start;
+    }
+
+    .skill-node {
       background-color: #222;
-      color: #888;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+      min-width: 160px;
+      text-align: center;
     }
   </style>
+  <script src="script.js" defer></script>
 </head>
 <body>
-
-  <h1>Árvore de Habilidades - Necromante</h1>
-  <p>Fama Atual: <span id="fame">0</span></p>
-  <button onclick="gainFame(100)">Ganhar 100 de Fama</button>
-
-  <div id="skills"></div>
-
-  <script>
-    class SkillNode {
-      constructor(id, name, description, fameRequired, connectedNodes = [], unlocked = false) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.fameRequired = fameRequired;
-        this.connectedNodes = connectedNodes;
-        this.unlocked = unlocked;
-      }
-    }
-
-    const skillTree = {
-      fame: 0,
-      nodes: [
-        new SkillNode(0, "Iniciação Sombria", "Desbloqueia acesso às magias necromânticas básicas.", 0, [1, 2], true),
-        new SkillNode(1, "Esqueletos de Guerra", "Invoca dois esqueletos com dano físico moderado.", 100, [3]),
-        new SkillNode(2, "Toque Espectral", "Ataque sombrio que reduz defesa inimiga.", 100, [4]),
-        new SkillNode(3, "Legião dos Mortos", "Aumenta o número máximo de esqueletos invocados.", 250, []),
-        new SkillNode(4, "Explosão Cadavérica", "Explode cadáveres causando dano em área.", 250, [])
-      ],
-
-      gainFame(amount) {
-        this.fame += amount;
-        document.getElementById("fame").textContent = this.fame;
-        this.checkUnlocks();
-        renderSkills();
-      },
-
-      checkUnlocks() {
-        for (let node of this.nodes) {
-          if (!node.unlocked && this.fame >= node.fameRequired) {
-            const hasConnectedUnlocked = node.connectedNodes.some(id => this.nodes[id]?.unlocked);
-            const isConnectedToUnlocked = this.nodes.some(n =>
-              n.connectedNodes.includes(node.id) && n.unlocked
-            );
-            if (isConnectedToUnlocked || node.fameRequired === 0) {
-              node.unlocked = true;
-            }
-          }
-        }
-      }
-    };
-
-    function gainFame(amount) {
-      skillTree.gainFame(amount);
-    }
-
-    function renderSkills() {
-      const container = document.getElementById("skills");
-      container.innerHTML = "";
-
-      skillTree.nodes.forEach(node => {
-        const div = document.createElement("div");
-        div.className = "skill" + (node.unlocked ? " unlocked" : "");
-        div.innerHTML = `
-          <h3>${node.name}</h3>
-          <p>${node.description}</p>
-          <p>Requer Fama: ${node.fameRequired}</p>
-          <p>Status: ${node.unlocked ? "Desbloqueada" : "Bloqueada"}</p>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    // Inicializar
-    renderSkills();
-  </script>
-
 </body>
 </html>
