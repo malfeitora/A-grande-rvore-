@@ -1,66 +1,104 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Skill Tree</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Solar - Skill Tree</title>
   <style>
     body {
-      background-color: #111;
-      color: #fff;
-      font-family: sans-serif;
       margin: 0;
-      height: 100vh;
+      background: black;
       overflow: hidden;
+      color: white;
+      font-family: sans-serif;
     }
-
-    #central-circle {
-      width: 100px;
-      height: 100px;
-      background-color: #4b0082;
-      border-radius: 50%;
+    canvas {
+      display: block;
+    }
+    .planet {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .skill-branch {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .skill-branch.left {
-      left: 20%;
-      align-items: flex-end;
-    }
-
-    .skill-branch.right {
-      right: 20%;
-      align-items: flex-start;
-    }
-
-    .skill-node {
-      background-color: #222;
-      padding: 8px 12px;
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 6px;
       border-radius: 8px;
-      border: 1px solid #555;
-      box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
-      min-width: 160px;
-      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .planet:hover {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.3);
     }
   </style>
-  <script src="script.js" defer></script>
 </head>
 <body>
+  <canvas id="solarSystem"></canvas>
+  <script>
+    const canvas = document.getElementById("solarSystem");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const planets = [
+      { name: "Mercúrio", x: 150, y: 0, color: "gray", link: "mercurio.html" },
+      { name: "Vênus", x: 220, y: 0, color: "goldenrod", link: "venus.html" },
+      { name: "Terra", x: 300, y: 0, color: "blue", link: "terra.html" },
+      { name: "Marte", x: 400, y: 0, color: "red", link: "marte.html" },
+    ];
+
+    let angle = 0;
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 20, 0, Math.PI * 2);
+      ctx.fillStyle = "yellow";
+      ctx.fill();
+      ctx.closePath();
+
+      planets.forEach((planet, index) => {
+        const orbit = planet.x;
+        const px = centerX + orbit * Math.cos(angle + index);
+        const py = centerY + orbit * Math.sin(angle + index);
+
+        ctx.beginPath();
+        ctx.arc(px, py, 10, 0, Math.PI * 2);
+        ctx.fillStyle = planet.color;
+        ctx.fill();
+        ctx.closePath();
+
+        planet.screenX = px;
+        planet.screenY = py;
+      });
+
+      angle += 0.01;
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    // Adiciona os botões invisíveis em cima dos planetas
+    setInterval(() => {
+      document.querySelectorAll(".planet").forEach(e => e.remove());
+      planets.forEach((planet) => {
+        const btn = document.createElement("div");
+        btn.className = "planet";
+        btn.textContent = planet.name;
+        btn.style.left = planet.screenX - 30 + "px";
+        btn.style.top = planet.screenY - 10 + "px";
+        btn.onclick = () => {
+          window.location.href = planet.link;
+        };
+        document.body.appendChild(btn);
+      });
+    }, 100);
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
 </html>
